@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "622694521192",
+    "project_id": "better-health1",
+    "storage_bucket": "better-health1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622694521192:android:e29204806966d4b2739edd",
+        "android_client_info": {
+          "package_name": "com.example.better_health"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622694521192-lneeim66lqor6c4oji5vkuegdikhrknf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDvdB-7C8j2-ml9SuIJyRHyW4gg1vAPLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622694521192-lneeim66lqor6c4oji5vkuegdikhrknf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
