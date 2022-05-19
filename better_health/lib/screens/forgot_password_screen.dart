@@ -54,7 +54,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 addSpaceVertically(35),
                 Text(
-                  'Login',
+                  'Forgot Password',
                   style: themeData.textTheme.headline1,
                 ),
                 SingleChildScrollView(
