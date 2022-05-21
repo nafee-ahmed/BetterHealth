@@ -22,7 +22,9 @@ class DoctorListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12),
-      child: Material(
+      child: Material(        
+        elevation: 3,
+        shadowColor: COLOR_BOX_GREY.withOpacity(.25),
         color: COLOR_BOX_GREY,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
@@ -35,7 +37,6 @@ class DoctorListItem extends StatelessWidget {
             width: size.width,
             height: 90,
             padding: EdgeInsets.all(10),
-            
             child: Row(
               children: [
                 Image.asset('assets/images/doctor_image.png'),
@@ -64,3 +65,13 @@ class DoctorListItem extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+// color: Colors.black.withOpacity(0.25),
+//                 blurRadius: 30,
+//                 offset: Offset(0, 10),

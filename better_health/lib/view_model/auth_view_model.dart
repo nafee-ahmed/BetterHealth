@@ -1,56 +1,49 @@
 import 'package:better_health/routes.dart';
 import 'package:better_health/utils/constants.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../services/user/my_user.dart';
+import '../services/services.dart';
 
 class AuthViewModel{
   static Future loginPress(BuildContext context, TextEditingController emailController, TextEditingController passwordController) async {
-    try {
-      showDialog(
-        context: context, 
-        builder: (context){
-          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-        }
-      );
-      await MyUser.signIn(emailController.text.trim(), passwordController.text.trim());
+    showDialog(
+      context: context, 
+      builder: (context){
+        return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
+      }
+    );
+    String signedInOrNot = await MyUser.signIn(emailController.text.trim(), passwordController.text.trim());
+
+    if(signedInOrNot == 'success'){
       Navigator.of(context).pop();
       Navigator.of(context).pushReplacementNamed(Routes.authPage);
-      // Navigator.of(context).pushNamedAndRemoveUntil(Routes.authPage, (route) => false);
-    } on FirebaseAuthException catch (e) {
-      print(e);
-      var msg = 'Wrong password or email';
-      if(emailController.text.isEmpty || passwordController.text.isEmpty){
-         msg = 'Either email or password field is empty';
-      }
+    }
+    else{
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg))
+        SnackBar(content: Text(signedInOrNot))
       );
     }
-    
     return null;
   }
 
   static Future? doctorSignupPress(BuildContext context, TextEditingController emailController, TextEditingController passwordController,
     TextEditingController nameController, final formKey) async {
     if(formKey.currentState!.validate()){
-      try {
-        showDialog(
-          context: context, 
-          builder: (context){
-            return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-          }
-        );
-        await MyUser.doctorSignUp(emailController.text.trim(), passwordController.text.trim(), nameController.text.trim(), 'doctor');
+      showDialog(
+        context: context, 
+        builder: (context){
+          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
+        }
+      );
+      String signedUpOrNot = await MyUser.doctorSignUp(emailController.text.trim(), passwordController.text.trim(), nameController.text.trim(), 'doctor');
+      if(signedUpOrNot == 'success') {
         Navigator.of(context).pop();
         Navigator.of(context).popAndPushNamed(Routes.doctorHomePage);
-      } on FirebaseAuthException catch (e) {
-        print(e);
+      } else {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message.toString()))
+          SnackBar(content: Text(signedUpOrNot))
         );
       }
     }
@@ -65,22 +58,22 @@ class AuthViewModel{
   static Future studentSignupPress(BuildContext context, TextEditingController emailController, TextEditingController passwordController, 
     TextEditingController nameController, TextEditingController matricController, final formKey) async {
     if(formKey.currentState!.validate()){
-      try {
-        showDialog(
-          context: context, 
-          builder: (context){
-            return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-          }
-        );
-        await MyUser.studentSignUp(emailController.text.trim(), passwordController.text.trim(), nameController.text.trim(), matricController.text.trim(), 'student');
+      showDialog(
+        context: context, 
+        builder: (context){
+          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
+        }
+      );
+      String signedUpOrNot = await MyUser.studentSignUp(emailController.text.trim(), passwordController.text.trim(), nameController.text.trim(), matricController.text.trim(), 'student');
+
+      if (signedUpOrNot == 'success') {
         Navigator.of(context).pop();  // loading bar
-        print('Sign up values: ${emailController.text}, ${passwordController.text}, ${nameController.text}, ${matricController.text}');
+        // print('Sign up values: ${emailController.text}, ${passwordController.text}, ${nameController.text}, ${matricController.text}');
         Navigator.of(context).popAndPushNamed(Routes.studentHome);
-      } on FirebaseAuthException catch (e) {
-        print(e);
+      } else {
         Navigator.of(context).pop();  // loading bar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.message.toString()))
+          SnackBar(content: Text(signedUpOrNot))
         );
       }
     }
@@ -93,25 +86,24 @@ class AuthViewModel{
   }
 
   static Future? logoutPress(BuildContext context) async {
-    try {
-      await MyUser.logout();
+    String loggedOutOrNot = await MyUser.logout();
+    if(loggedOutOrNot == 'success') {
       // Navigator.of(context).pop();
       Navigator.of(context).pushReplacementNamed(Routes.authPage);
-    } on FirebaseAuthException catch (e) {
-      print(e);
+    } else {
+      print(loggedOutOrNot);
     }
   }
 
   static Future? forgotPasswordPress(BuildContext context, TextEditingController emailController) async {
-    try {
-      await MyUser.forgotPassword(emailController.text.trim());
+    String forgotRes = await MyUser.forgotPassword(emailController.text.trim());
+    if(forgotRes == 'success') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Password reset link sent to your email!'))
       );
-    } on FirebaseAuthException catch (e) {
-      print(e);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message.toString()))
+        SnackBar(content: Text(forgotRes))
       );
     }
   }
