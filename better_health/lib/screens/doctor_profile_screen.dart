@@ -1,11 +1,18 @@
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
+import 'package:better_health/view_model/auth_view_model.dart';
 import 'package:better_health/widgets/input.dart';
 import 'package:better_health/widgets/long_button.dart';
 import 'package:better_health/widgets/page_heading.dart';
 import 'package:better_health/widgets/top_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../models/currentUser.dart';
+import '../routes.dart';
+import '../services/services.dart';
+import '../utils/custom_exception.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
   const DoctorProfileScreen({ Key? key }) : super(key: key);
@@ -21,11 +28,16 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
+  TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController oldPasswordController = TextEditingController();
+
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
+    confirmPasswordController.dispose();
+    oldPasswordController.dispose();
     super.dispose();
   }
 
@@ -33,14 +45,6 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;  // gets size of whole screen
     final ThemeData themeData = Theme.of(context);
-
-    Function? editProfile(){
-      return null;
-    }
-
-    Function? deleteProfile(){
-      return null;
-    }
 
     return Container(
       padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
@@ -62,22 +66,46 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     child: FaIcon(FontAwesomeIcons.solidUser, size: 40,)
                   ),
                   addSpaceVertically(size.height*0.03),
-                  Text('Mark Tom', style: themeData.textTheme.headline3!.copyWith(fontWeight: FontWeight.w700),),
+                  Consumer<CurrentUser>(
+                    builder: (context, value, child){
+                      return value.name == ''
+                      ? CircularProgressIndicator(color: COLOR_PRIMARY,)
+                      : Text('${value.name}', style: themeData.textTheme.headline3!.copyWith(fontWeight: FontWeight.w700),);
+                    }
+                  ),
                   addSpaceVertically(size.height*0.01),
                   SingleChildScrollView(
                     child: Form(
                       key: _formKey,
-                      child: Column(
-                        children: [
-                          Input(placeholder: 'Email ID', iconData: FontAwesomeIcons.solidEnvelope, validator: emailValidator, controller: emailController,),
-                          addSpaceVertically(size.height*0.01),
-                          Input(placeholder: 'Password', iconData: FontAwesomeIcons.lock, validator: passwordValidator, controller: passwordController,),
-                          addSpaceVertically(size.height*0.01),
-                          Input(placeholder: 'Name', iconData: FontAwesomeIcons.solidUser, validator: nameValidator, controller: nameController,),
-                          addSpaceVertically(size.height*0.01),
-                          LongButton(size: size, text: 'Edit', pressFunc: editProfile),
-                          LongButton(size: size, text: 'Delete', pressFunc: deleteProfile, color: COLOR_BLUE,),
-                        ],
+                      child: Consumer<CurrentUser>(
+                        builder: (context, value, child) {
+                          nameController.text = value.name;
+                          emailController.text = value.email;
+                          
+                          return (value.name == '' && value.email == '')
+                          ? CircularProgressIndicator(color: COLOR_PRIMARY,)
+                          : Column(
+                            children: [
+                              Input(placeholder: 'Email ID', iconData: FontAwesomeIcons.solidEnvelope, validator: emailValidator, controller: emailController,),
+                              addSpaceVertically(size.height*0.01),
+                              Input(placeholder: 'Current Password', iconData: FontAwesomeIcons.key, validator: passwordValidator, controller: oldPasswordController, obscureText: true,),
+                              addSpaceVertically(size.height*0.01),
+                              Input(placeholder: 'New Password', iconData: FontAwesomeIcons.lock, validator: updatePasswordValidator, controller: passwordController, obscureText: true,),
+                              
+                              Input(placeholder: 'Confirm Password', iconData: FontAwesomeIcons.lockOpen, validator: (val) {
+                                if(val != passwordController.text){
+                                  return 'Please repeat the same password';
+                                }
+                                return null;
+                              }, controller: confirmPasswordController, obscureText: true,),
+                              Input(placeholder: 'Name', iconData: FontAwesomeIcons.solidUser, validator: nameValidator, controller: nameController,),
+                              addSpaceVertically(size.height*0.01),
+                              LongButton(size: size, text: 'Edit', pressFunc: () => AuthViewModel.editProfile(nameController.text.trim(), oldPasswordController.text.trim(), passwordController.text.trim(), emailController.text.trim(), 
+                              _formKey, context)),
+                              LongButton(size: size, text: 'Delete', pressFunc: () => AuthViewModel.deleteProfile(oldPasswordController.text.trim(), context), color: COLOR_BLUE,),
+                            ],
+                          );
+                        }
                       ),
                     ),
                   ),

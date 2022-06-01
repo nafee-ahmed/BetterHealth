@@ -22,6 +22,8 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController matricController = TextEditingController();
+  TextEditingController specialityController = TextEditingController();
+  TextEditingController aboutController = TextEditingController();
 
   
 
@@ -31,6 +33,8 @@ class _SignupScreenState extends State<SignupScreen> {
     passwordController.dispose();
     nameController.dispose();
     matricController.dispose();
+    specialityController.dispose();
+    aboutController.dispose();
     super.dispose();
   }
   
@@ -66,6 +70,10 @@ class _SignupScreenState extends State<SignupScreen> {
                         Input(placeholder: 'Password', iconData: Icons.lock_outlined, validator: passwordValidator, obscureText: true, controller: passwordController,),
                         Input(placeholder: 'Name', iconData: Icons.perm_identity, validator: nameValidator, controller: nameController,),
                         Input(placeholder: 'Matric', iconData: Icons.fingerprint, validator: matricValidator, controller: matricController,),
+                        
+                        Input(placeholder: 'Speciality', iconData: Icons.grading, validator: specialityValidator, controller: specialityController,),
+                        Input(placeholder: 'About', iconData: Icons.info, validator: aboutValidator, controller: aboutController,),
+
                         addSpaceVertically(20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,8 +87,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ],
                         ),
-                        AuthButton(size: size, text: 'Student Sign up', pressFunc: () => AuthViewModel.studentSignupPress(context, emailController, passwordController, nameController, matricController, formKey),),
-                        AuthButton(size: size, text: 'Doctor Sign up', pressFunc: () => AuthViewModel.doctorSignupPress(context, emailController, passwordController, nameController, formKey), color: COLOR_BLUE,),
+                        AuthButton(size: size, text: 'Student Sign up', pressFunc: () => AuthViewModel.studentSignupPress(context, emailController, passwordController, nameController, matricController, specialityController, aboutController, formKey),),
+                        AuthButton(size: size, text: 'Doctor Sign up', pressFunc: () => AuthViewModel.doctorSignupPress(context, emailController, passwordController, nameController, specialityController, aboutController, formKey), color: COLOR_BLUE,),
                       ],
                     ),
                   ),

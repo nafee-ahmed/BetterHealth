@@ -1,10 +1,13 @@
+import 'package:better_health/models/currentUser.dart';
 import 'package:better_health/screens/emergency_request_screen.dart';
 import 'package:better_health/screens/student_doctor_list.dart';
 import 'package:better_health/screens/student_profile_screen.dart';
 import 'package:better_health/screens/student_rating_screen.dart';
+import 'package:better_health/services/user/my_user.dart';
 import 'package:better_health/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class StudentHomeScreen extends StatefulWidget {
   const StudentHomeScreen({ Key? key }) : super(key: key);
@@ -16,7 +19,6 @@ class StudentHomeScreen extends StatefulWidget {
 class _StudentHomeScreenState extends State<StudentHomeScreen> {
   var indexClicked = 0;
   
-
   @override
   Widget build(BuildContext context) {
     List<Widget> _screens = [

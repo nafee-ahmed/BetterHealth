@@ -19,7 +19,7 @@ class AuthStreamListener extends StatelessWidget {
         if(snapshot.hasData){
           return FutureBuilder(
             future: MyUser.getUserType(),
-            builder: (context, snapshot){
+            builder: (context, snapshot) {
               if(snapshot.data == 'doctor'){
                 return DoctorHomeScreen();
               }

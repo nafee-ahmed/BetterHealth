@@ -13,6 +13,8 @@ class DoctorViewItem extends StatelessWidget {
     this.rejectFunc,
     this.page = 'bookingList',
     this.image = 'student_image',
+    this.name = '',
+    this.text = ''
   }) : super(key: key);
 
   final Size size;
@@ -21,12 +23,14 @@ class DoctorViewItem extends StatelessWidget {
   final Function? rejectFunc;
   final String page;
   final String image;
+  final String name;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 25),
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: 80),
         child: Container(
@@ -53,8 +57,8 @@ class DoctorViewItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           addSpaceVertically(4),
-                          Text('Angela Hopkins', style: themeData.textTheme.headline5,),
-                          Text('I have sour throat jafkjnfjna jfajkjfnjknsf jnfjknasfj ',)
+                          Text(name == '' ? 'Fake Filler Data' : name, style: themeData.textTheme.headline5,),
+                          Text(text == '' ? 'This is a fake filler data' : text,)
                         ],
                       ),
                     ),

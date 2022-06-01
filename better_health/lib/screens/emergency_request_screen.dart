@@ -1,3 +1,4 @@
+import 'package:better_health/view_model/emergency_viewmodel.dart';
 import 'package:better_health/widgets/long_button.dart';
 import 'package:better_health/widgets/page_heading.dart';
 import 'package:better_health/widgets/top_navbar.dart';
@@ -19,9 +20,7 @@ class _EmergencyRequestScreenState extends State<EmergencyRequestScreen> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emergencyController = TextEditingController();
 
-  Function? emergencyPress(){
-    return null;
-  }
+  
 
   @override
   void dispose() {
@@ -33,17 +32,6 @@ class _EmergencyRequestScreenState extends State<EmergencyRequestScreen> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;  // gets size of whole screen
     final ThemeData themeData = Theme.of(context);
-
-
-
-    String? emergencyValidator(String? value){
-      if(value!.isEmpty){
-        return 'This is required';
-      }
-      else{
-        return null;
-      }
-    }
 
     return Container(
       padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
@@ -59,7 +47,7 @@ class _EmergencyRequestScreenState extends State<EmergencyRequestScreen> {
               child: Column(
                 children: [
                   Input(placeholder: 'Description for Emergency', iconData: FontAwesomeIcons.truckMedical, minLines: 5, validator: emergencyValidator, controller: emergencyController,),
-                  LongButton(size: size, text: 'Request', pressFunc: emergencyPress),
+                  LongButton(size: size, text: 'Request', pressFunc: () => EmergencyViewModel.emergencyRequest(_formKey, emergencyController, context)),
                 ],
               ),
             ),

@@ -11,6 +11,9 @@ class DoctorListItem extends StatelessWidget {
     required this.themeData,
     this.page = 'topDoctors',
     this.executeOnTap,
+    this.name = '',
+    this.speciality = '',
+    this.rating = 0
   }) : super(key: key);
 
   final Size size;
@@ -18,10 +21,14 @@ class DoctorListItem extends StatelessWidget {
   final String page;
   final Function? executeOnTap;
 
+  final String name;
+  final String speciality;
+  final double rating;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 14),
       child: Material(        
         elevation: 3,
         shadowColor: COLOR_BOX_GREY.withOpacity(.25),
@@ -35,27 +42,40 @@ class DoctorListItem extends StatelessWidget {
           },
           child: Container(
             width: size.width,
-            height: 90,
+            height: page == 'ratingScreen'  ? 105 : 90,
             padding: EdgeInsets.all(10),
             child: Row(
               children: [
                 Image.asset('assets/images/doctor_image.png'),
                 addSpaceHorizontally(13),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RatingBar.builder(
-                      initialRating: 3,
-                      ignoreGestures: page == 'topDoctors' ? true : false,
-                      itemSize: 20,
-                      itemBuilder: (context, _) => Icon(Icons.star, color: COLOR_AMBER,),
-                      onRatingUpdate: (rating){
-                      },
-                    ),
-                    addSpaceVertically(4),
-                    Text('Dr. Angela Hopkins', style: themeData.textTheme.headline5,),
-                    Text('Dentist',)
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RatingBar.builder(
+                        initialRating: rating,
+                        ignoreGestures: page == 'topDoctors' ? true : false,
+                        itemSize: 20,
+                        itemBuilder: (context, _) => Icon(Icons.star, color: COLOR_AMBER,),
+                        onRatingUpdate: (rating){
+                          print('Rating: ' + rating.toString());
+                        },
+                      ),
+                      addSpaceVertically(4),
+                      Text(
+                        name == '' ? 'Sample Data' : name, 
+                        style: themeData.textTheme.headline5,
+                      ),
+                      page == 'ratingScreen' 
+                      ? Text(
+                        speciality == '' ? 'Sample' : speciality,
+                        style: themeData.textTheme.subtitle1,
+                      )
+                      : Text(
+                        speciality == '' ? 'Sample' : speciality,
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),

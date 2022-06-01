@@ -1,4 +1,6 @@
+import 'package:better_health/services/bookings/booking_service.dart';
 import 'package:better_health/utils/common_functions.dart';
+import 'package:better_health/utils/constants.dart';
 import 'package:better_health/widgets/doctor_list_item.dart';
 import 'package:better_health/widgets/page_heading.dart';
 import 'package:better_health/widgets/top_navbar.dart';
@@ -25,10 +27,39 @@ class _StudentRateScreenState extends State<StudentRateScreen> {
           PageHeading(themeData: themeData, text: 'Rate Doctors',),
           addSpaceVertically(18),
           Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (BuildContext context, int index){
-                return DoctorListItem(size: size, themeData: themeData, page: 'ratingScreen',);
+            child: FutureBuilder<dynamic>(
+              future: BookingService.getDoctorListForRating(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List list = snapshot.data;
+                  if (list.length == 0) return Column(
+                    children: [
+                      Text('Nothing to display!', style: themeData.textTheme.displayMedium,),
+                      addSpaceVertically(size.height * 0.02),
+                      Text(
+                        'Your clinic sessions will become available to rate once the doctors you sent booking requests to, accept your booking',
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  );
+
+                  return ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext context, int index){
+                      return DoctorListItem(
+                        size: size, themeData: themeData, 
+                        page: 'ratingScreen',
+                        name: list[index]['doctorName'],
+                        speciality: 'Treated you on ' + list[index]['day'] + ', ' + list[index]['date'] + ' ' + list[index]['month'] + ' ' + list[index]['year'] + ', ' + ' ' + list[index]['time'],
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return Text(snapshot.error.toString());
+                } else {
+                  return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY,));
+                }
               },
             ),
           )

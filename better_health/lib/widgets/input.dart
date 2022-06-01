@@ -11,6 +11,7 @@ class Input extends StatelessWidget {
     this.obscureText = false,
     required this.controller,
     }) : super(key: key);
+
   final String placeholder; 
   final IconData iconData;
   final int minLines;

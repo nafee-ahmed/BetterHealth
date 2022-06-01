@@ -3,11 +3,14 @@ import 'package:better_health/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class DateBox extends StatefulWidget {
-  const DateBox({ Key? key, this.date = '', required this.text, required this.selectedText }) : super(key: key);
+  const DateBox({ Key? key, this.date = '', required this.text, required this.selectedText,
+  this.year='', this.month='' }) : super(key: key);
 
   final String text;
   final String date;
   final String selectedText;
+  final String year;
+  final String month;
 
   @override
   State<DateBox> createState() => _DateBoxState();
@@ -22,8 +25,8 @@ class _DateBoxState extends State<DateBox> {
       alignment: Alignment.center,
       children: [
         Container(
-          width: (widget.date != '') ? 70 : 90,
-          padding: (widget.date != '') ? EdgeInsets.symmetric(horizontal: 16, vertical: 20) : EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          width: (widget.date != '') ? 75 : 90,
+          padding: (widget.date != '') ? EdgeInsets.symmetric(horizontal: 16, vertical: 15) : EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           decoration: BoxDecoration(
             color: COLOR_BOX_GREY,
@@ -35,7 +38,7 @@ class _DateBoxState extends State<DateBox> {
             mainAxisSize: MainAxisSize.min,
             children: [
               FittedBox(
-                fit: BoxFit.fitWidth,
+                fit: BoxFit.contain,
                 child: Text(
                   widget.text,
                   style: (widget.date != '') ? 
@@ -56,14 +59,26 @@ class _DateBoxState extends State<DateBox> {
                   color: COLOR_BLACK,
                   fontWeight: FontWeight.bold,
                 ),
-              )
+              ),
+              
+
+
+
+              if(widget.date != '')
+              Text(
+                '${widget.month}, ${widget.year}',
+                style: TextStyle(color: COLOR_GREY_TEXT, fontSize: 8) 
+              ),
+
+
+
             ],
           ),
         ),
-        if(widget.selectedText == widget.text)
+        if(widget.selectedText == widget.text + widget.date)
         Positioned(
           right: (widget.date != '') ? 0 : 16,
-          top:  5,
+          top:  (widget.date != '') ? 12 : 5,
           child: Material(
             color: Colors.transparent,
             shape: CircleBorder(
