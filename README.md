@@ -6,4 +6,4 @@ Google Drive Link for apk: https://drive.google.com/file/d/10Iwv_ABGUIofW5RrYrFt
 
 
 
-Second sprint code half not finalized.
+Second sprint code half not finalized again.

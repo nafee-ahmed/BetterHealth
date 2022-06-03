@@ -102,7 +102,11 @@ class _DoctorListState extends State<DoctorList> {
                   return ListView.builder(
                     itemCount: docList.length,
                     itemBuilder: (BuildContext context, int index){
-                      return DoctorListItem(size: size, themeData: themeData, executeOnTap: () => viewDoctor(docList[index]['name'], docList[index]['speciality'], 0, docList[index]['about'], docList[index]['id']), name: docList[index]['name'], speciality: docList[index]['speciality'],);
+                      return DoctorListItem(
+                        size: size, themeData: themeData, 
+                        rating: docList[index]['rating'],
+                        executeOnTap: () => viewDoctor(docList[index]['name'], docList[index]['speciality'], 0, docList[index]['about'], docList[index]['id']), name: docList[index]['name'], speciality: docList[index]['speciality'],
+                      );
                     },
                   );
                 } else {

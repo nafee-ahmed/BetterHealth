@@ -125,3 +125,10 @@ String? specialityValidator(String? value){
   }
 }
 
+class DateHolder {
+  String day;
+  String month;
+  String year;
+  String date;
+  DateHolder(this.day, this.month, this.year, this.date);
+}

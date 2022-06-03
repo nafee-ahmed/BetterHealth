@@ -1,5 +1,6 @@
 import 'package:better_health/models/currentUser.dart';
 import 'package:better_health/routes.dart';
+import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,18 +38,18 @@ class AuthViewModel{
   // }
 
   static Future loginPress(BuildContext context, TextEditingController emailController, TextEditingController passwordController) async {
-    BuildContext cont = context;
+    late BuildContext dialogContext;
     showDialog(
       context: context, 
-      builder: (context){
+      builder: (context) {
+        dialogContext = context;
         return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
       }
     );
-
     try {
       await MyUser.signIn(emailController.text.trim(), passwordController.text.trim());
-      Navigator.of(cont).pop();
-      Navigator.of(context).pushReplacementNamed(Routes.authPage);
+      Navigator.of(dialogContext).pop();
+      Navigator.of(dialogContext).pushReplacementNamed(Routes.authPage);
         
     } on CustomException catch (e) {
       Navigator.of(context).pop();

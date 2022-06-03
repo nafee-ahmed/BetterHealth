@@ -1,8 +1,13 @@
 import 'dart:math';
 
+import 'package:better_health/models/selected_doctor.dart';
 import 'package:better_health/utils/custom_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../utils/common_functions.dart';
 
 class BookingService {
   static Future sendDoctorSchedule(Map<DateTime, List<String>> events) async {
@@ -35,8 +40,9 @@ class BookingService {
 
   static Stream<QuerySnapshot> loadTopDoctors() {
     try {
-      return FirebaseFirestore.instance.collection('users').where('userType', isEqualTo: 'doctor').snapshots();
+      return FirebaseFirestore.instance.collection('users').orderBy('rating', descending: true).where('userType', isEqualTo: 'doctor').snapshots();
     } on FirebaseAuthException catch (e) {
+      print(e.stackTrace);
       throw CustomException(e.message);
     }
   }
@@ -103,6 +109,47 @@ class BookingService {
     }
   }
 
+  static Future editBookingRequest(String date, String day, String month, String year, String time, 
+  String docID) async {
+    try {
+      final user = await FirebaseAuth.instance.currentUser;
+      final snapshots = await FirebaseFirestore.instance.collection('schedules')
+      .where('patientID', isEqualTo: user!.uid)
+      .where('doctorID', isEqualTo: docID)
+      .where('status', isEqualTo: 'pending').get();
+      String documentID = '';
+
+      for(var s in snapshots.docs) {
+        documentID = s.reference.id;
+        await FirebaseFirestore.instance.collection('schedules').doc(documentID).update({
+          'date': date,
+          'day': day,
+          'month': month,
+          'year': year,
+          'time': time,
+        });
+      }
+    } on FirebaseAuthException catch (e) {
+      throw CustomException(e.message);
+    }
+  }
+
+  static Future deleteBookingRequest(BuildContext context, String doctorID) async {
+    try {
+      final user = await FirebaseAuth.instance.currentUser;
+      final snapshots = await FirebaseFirestore.instance.collection('schedules')
+      .where('patientID', isEqualTo: user!.uid)
+      .where('doctorID', isEqualTo: doctorID)
+      .where('status', isEqualTo: 'pending').get();
+
+      for(var s in snapshots.docs) {
+        await FirebaseFirestore.instance.collection('schedules').doc(s.reference.id).delete();
+      }
+    } on FirebaseAuthException catch (e) {
+      throw CustomException(e.message);
+    }
+  }
+
   static Stream getBookingRequestList() async* {
     try {
       final user = await FirebaseAuth.instance.currentUser;
@@ -157,8 +204,11 @@ class BookingService {
       for(var doc in docs.docs) {
         if (doc.exists == true) {
           final user = await FirebaseFirestore.instance.collection('users').doc(doc['doctorID']).get();
+          String doctorID = user.reference.id;
           final userData = user.data() as Map<String, dynamic>;
-          list.add({ 'doctorName': userData['name'], 'day': doc['day'], 'date': doc['date'], 'month': doc['month'], 'year': doc['year'], 'time': doc['time'] });
+          double rating = doc.data().toString().contains('rating') ? doc.get('rating') : 0;
+          list.add({ 'doctorName': userData['name'], 'day': doc['day'], 'date': doc['date'], 'month': doc['month'], 'year': doc['year'], 'time': doc['time'],
+          'doctorID': doctorID, 'rating': rating });
         }
       }
       return list;
@@ -167,3 +217,7 @@ class BookingService {
     }
   }
 }
+
+
+
+// doc.data().toString().contains('id') ? doc.get('id') : '',

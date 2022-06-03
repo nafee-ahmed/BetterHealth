@@ -1,7 +1,11 @@
+import 'package:better_health/models/selected_doctor.dart';
 import 'package:better_health/screens/schedule_screen.dart';
 import 'package:better_health/services/services.dart';
+import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
+import 'package:better_health/utils/custom_exception.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BookingViewModel {
   static Function? addScheduleButton(BuildContext context, final eventController,
@@ -57,5 +61,76 @@ class BookingViewModel {
 
   static Future getScheduleByID(String id) async {
     return BookingService.getScheduleByID(id);
+  }
+
+  static Future sendBookingRequest(int index, Function? setter, String selectedTime, BuildContext context,
+  Map<DateHolder, List<dynamic>> scheduleMap, ) async {
+    if (selectedTime == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Select a time first.'))
+      );
+      return;
+    }
+    try {
+      String date = scheduleMap.keys.elementAt(index).date;
+      String day = scheduleMap.keys.elementAt(index).day;
+      String month = scheduleMap.keys.elementAt(index).month;
+      String year = scheduleMap.keys.elementAt(index).year;
+      print(date + ' ' + day + ' ' + month + ' ' + year + ' ' + selectedTime);
+      await BookingService.sendBookingRequest(date, day, month, year, selectedTime, 
+      context.read<SelectedDoctor>().id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Booking request sent to the doctor. Please wait for the doctor\'s response'))
+      );
+      setter!();
+    } on CustomException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message!))
+      );
+    }
+    // print(selectedTime);
+  }
+
+  static Future editBookingRequest(int index, String selectedTime, Function? setter,
+  BuildContext context, Map<DateHolder, List<dynamic>> scheduleMap,) async {
+    if (selectedTime == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Select a time first.'))
+      );
+      return;
+    }
+    try {
+      String date = scheduleMap.keys.elementAt(index).date;
+      String day = scheduleMap.keys.elementAt(index).day;
+      String month = scheduleMap.keys.elementAt(index).month;
+      String year = scheduleMap.keys.elementAt(index).year;
+      // print(date + ' ' + day + ' ' + month + ' ' + year + ' ' + selectedTime);
+      await BookingService.editBookingRequest(date, day, month, year, selectedTime, 
+      context.read<SelectedDoctor>().id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Booking request updated. Please wait for the doctor\'s response'))
+      );
+      setter!();
+    } on CustomException catch (e) {
+      print(e.message);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message!))
+      );
+    }
+  }
+
+  static Future deleteBookingRequest(BuildContext context, Function? setter) async {
+    try {
+      await BookingService.deleteBookingRequest(context, context.read<SelectedDoctor>().id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Booking request cancelled'))
+      );
+      setter!();
+    } on CustomException catch (e) {
+      print(e.message);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message!))
+      );
+    }
   }
 }

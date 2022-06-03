@@ -28,47 +28,10 @@ class _DoctorRequestState extends State<DoctorRequest> {
     Navigator.of(context).pop();
   }
 
-  Future sendBookingRequest(int index) async {
-    if (selectedTime == '') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Select a time first.'))
-      );
-      return;
-    }
-    try {
-      String date = scheduleMap.keys.elementAt(index).date;
-      String day = scheduleMap.keys.elementAt(index).day;
-      String month = scheduleMap.keys.elementAt(index).month;
-      String year = scheduleMap.keys.elementAt(index).year;
-      print(date + ' ' + day + ' ' + month + ' ' + year + ' ' + selectedTime);
-      BookingService.sendBookingRequest(date, day, month, year, selectedTime, 
-      context.read<SelectedDoctor>().id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Booking request sent to the doctor. Please wait for the doctor\'s response'))
-      );
-      // setState(() {
-      //   bookingSent =  true;
-      // });
-    } on CustomException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message!))
-      );
-    }
-    // print(selectedTime);
+  Function? setter() {
+    setState(() {
+    });
   }
-
-  Function? editBookingRequest() {
-    return null;
-  }
-
-  // final List<Date> dates = [
-  //   Date("Su", "13", false),
-  //   Date("Mon", "14", false),
-  //   Date("Tu", "15", false),
-  //   Date("We", "16", false),
-  //   Date("Th", "17", false),
-  //   Date("Th", "17", false),
-  // ];
 
   final List<String> times = ["9:00 AM", "9:10 AM", "9:20 AM", "9:30 AM", "9:40 AM", "9:50 AM"];
 
@@ -255,12 +218,14 @@ class _DoctorRequestState extends State<DoctorRequest> {
                         
                         Padding(
                           padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                          child: bookingSent == false ? LongButton(size: size, text: 'Send Request', pressFunc: () => sendBookingRequest(selectedIndex))
-                                                      : LongButton(size: size, text: 'Edit Request', pressFunc: () => editBookingRequest()),
+                          child: bookingSent == false 
+                          ? LongButton(size: size, text: 'Send Request', 
+                            pressFunc: () => BookingViewModel.sendBookingRequest(selectedIndex, setter, selectedTime, context, scheduleMap))
+                          : LongButton(size: size, text: 'Edit Request', pressFunc: () => BookingViewModel.editBookingRequest(selectedIndex, selectedTime, setter, context, scheduleMap)),
                         ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                          child: bookingSent == true ? LongButton(size: size, text: 'Delete Request', pressFunc: () => editBookingRequest(), color: COLOR_BLUE,) : null,
+                          child: bookingSent == true ? LongButton(size: size, text: 'Delete Request', pressFunc: () => BookingViewModel.deleteBookingRequest(context, setter), color: COLOR_BLUE,) : null,
                         )
                       ],
                     );
@@ -280,13 +245,4 @@ class _DoctorRequestState extends State<DoctorRequest> {
       ),
     );
   }
-}
-
-
-class DateHolder {
-  String day;
-  String month;
-  String year;
-  String date;
-  DateHolder(this.day, this.month, this.year, this.date);
 }

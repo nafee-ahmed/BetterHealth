@@ -56,7 +56,8 @@ class MyUser{
         'email': email,
         'userType': userType,
         'speciality': speciality,
-        'about': about
+        'about': about,
+        'rating': 0
       });
       return 'success';
     } on FirebaseAuthException catch (e) {

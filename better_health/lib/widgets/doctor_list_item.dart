@@ -1,10 +1,12 @@
+import 'package:better_health/models/rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/common_functions.dart';
 import '../utils/constants.dart';
 
-class DoctorListItem extends StatelessWidget {
+class DoctorListItem extends StatefulWidget {
   const DoctorListItem({
     Key? key,
     required this.size,
@@ -26,6 +28,11 @@ class DoctorListItem extends StatelessWidget {
   final double rating;
 
   @override
+  State<DoctorListItem> createState() => _DoctorListItemState();
+}
+
+class _DoctorListItemState extends State<DoctorListItem> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 14),
@@ -38,11 +45,11 @@ class DoctorListItem extends StatelessWidget {
         ),
         child: InkWell(
           onTap: (){
-            if(executeOnTap != null) executeOnTap!();
+            if(widget.executeOnTap != null) widget.executeOnTap!();
           },
           child: Container(
-            width: size.width,
-            height: page == 'ratingScreen'  ? 105 : 90,
+            width: widget.size.width,
+            height: widget.page == 'ratingScreen'  ? 105 : 90,
             padding: EdgeInsets.all(10),
             child: Row(
               children: [
@@ -53,26 +60,27 @@ class DoctorListItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       RatingBar.builder(
-                        initialRating: rating,
-                        ignoreGestures: page == 'topDoctors' ? true : false,
+                        initialRating: widget.rating,
+                        ignoreGestures: widget.page == 'topDoctors' ? true : false,
                         itemSize: 20,
                         itemBuilder: (context, _) => Icon(Icons.star, color: COLOR_AMBER,),
                         onRatingUpdate: (rating){
-                          print('Rating: ' + rating.toString());
+                          context.read<Rating>().rating = rating;
+                          if (widget.executeOnTap != null && widget.page == 'ratingScreen') widget.executeOnTap!();
                         },
                       ),
                       addSpaceVertically(4),
                       Text(
-                        name == '' ? 'Sample Data' : name, 
-                        style: themeData.textTheme.headline5,
+                        widget.name == '' ? 'Sample Data' : widget.name, 
+                        style: widget.themeData.textTheme.headline5,
                       ),
-                      page == 'ratingScreen' 
+                      widget.page == 'ratingScreen' 
                       ? Text(
-                        speciality == '' ? 'Sample' : speciality,
-                        style: themeData.textTheme.subtitle1,
+                        widget.speciality == '' ? 'Sample' : widget.speciality,
+                        style: widget.themeData.textTheme.subtitle1,
                       )
                       : Text(
-                        speciality == '' ? 'Sample' : speciality,
+                        widget.speciality == '' ? 'Sample' : widget.speciality,
                       ),
                     ],
                   ),
