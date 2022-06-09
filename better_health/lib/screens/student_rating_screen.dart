@@ -1,17 +1,11 @@
-import 'dart:ffi';
-
-import 'package:better_health/models/rating.dart';
-import 'package:better_health/models/selected_doctor.dart';
-import 'package:better_health/services/bookings/booking_service.dart';
-import 'package:better_health/services/services.dart';
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
-import 'package:better_health/utils/custom_exception.dart';
+import 'package:better_health/view_model/booking_view_model.dart';
+import 'package:better_health/view_model/rating_view_model.dart';
 import 'package:better_health/widgets/doctor_list_item.dart';
 import 'package:better_health/widgets/page_heading.dart';
 import 'package:better_health/widgets/top_navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class StudentRateScreen extends StatefulWidget {
   const StudentRateScreen({ Key? key }) : super(key: key);
@@ -22,20 +16,6 @@ class StudentRateScreen extends StatefulWidget {
 
 class _StudentRateScreenState extends State<StudentRateScreen> {
   double rating = 0;
-  Future addRating(double rating, String doctorID, String date, String month) async {
-    try {
-      await RatingService.addRating(context.read<Rating>().rating, doctorID, date, month);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Rated 🥳!'))
-      );
-    } on CustomException catch (e) {
-      print(e.message);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message!))
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;  // gets size of whole screen
@@ -44,13 +24,13 @@ class _StudentRateScreenState extends State<StudentRateScreen> {
       padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
       child: Column(
         children: [
-          TopNavBar(),
+          TopNavBar(onLeftPress: () => onClickNotification(context),),
           addSpaceVertically(20),
           PageHeading(themeData: themeData, text: 'Rate Doctors',),
           addSpaceVertically(18),
           Expanded(
             child: FutureBuilder<dynamic>(
-              future: BookingService.getDoctorListForRating(),
+              future: BookingViewModel.getDoctorListForRating(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List list = snapshot.data;
@@ -74,7 +54,7 @@ class _StudentRateScreenState extends State<StudentRateScreen> {
                         page: 'ratingScreen',
                         name: list[index]['doctorName'],
                         speciality: 'Treated you on ' + list[index]['day'] + ', ' + list[index]['date'] + ' ' + list[index]['month'] + ' ' + list[index]['year'] + ', ' + ' ' + list[index]['time'],
-                        executeOnTap: () => addRating(rating, list[index]['doctorID'], list[index]['date'], list[index]['month']),
+                        executeOnTap: () => RatingViewModel.addRating(rating, list[index]['doctorID'], list[index]['date'], list[index]['month'], context),
                         rating: list[index]['rating'],
                       );
                     },

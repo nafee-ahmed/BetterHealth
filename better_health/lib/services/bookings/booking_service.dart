@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:better_health/models/selected_doctor.dart';
+import 'package:better_health/services/messaging/messaging_service.dart';
 import 'package:better_health/utils/custom_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -94,7 +95,7 @@ class BookingService {
   String docID) async {
     try {
       final user = await FirebaseAuth.instance.currentUser;
-      return FirebaseFirestore.instance.collection('schedules').add({
+      FirebaseFirestore.instance.collection('schedules').add({
         'patientID': user!.uid,
         'status': 'pending',
         'date': date,
@@ -104,6 +105,23 @@ class BookingService {
         'time': time,
         'doctorID': docID,
       });
+
+      final userFireStore = await FirebaseFirestore.instance.collection('users').doc(docID).get();  // sends notification
+      print('receiver ID');
+      print(userFireStore.data()!['token']);
+      String notificationTitle = 'Booking Request';
+      String notificationBody = 'New booking request received from ${user.email}.';
+      
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'title': notificationTitle,
+        'body': notificationBody,
+        'type': 'bookingRequest',
+        'receiverID': docID,
+        'senderID': user.uid
+      });
+
+      await MessagingService.sendNotification(notificationTitle, notificationBody, userFireStore.data()!['token']);
+
     } on FirebaseAuthException catch (e) {
       throw CustomException(e.message);
     }
@@ -165,7 +183,7 @@ class BookingService {
           final userData = user.data() as Map<String, dynamic>;
           // print(userData['name']);
           list.add({ 'date': s['date'], 'day': s['day'], 'month': s['month'], 'time': s['time'], 'year': s['year'],
-          'id': s.reference.id, 'studentName': userData['name'] });
+          'id': s.reference.id, 'studentName': userData['name'], 'studentID': s['patientID'] });
         }
       }
 
@@ -175,20 +193,58 @@ class BookingService {
     }
   }
 
-  static Future acceptBookingRequest(String reqID) async {
+  static Future acceptBookingRequest(String reqID, String studentID) async {
     try {
       final user = await FirebaseAuth.instance.currentUser;
       await FirebaseFirestore.instance.collection('schedules').doc(reqID).update({
         'status': 'confirmed'
       });
+
+
+      final userFireStore = await FirebaseFirestore.instance.collection('users').doc(studentID).get();  // sends notification
+      print('receiver ID');
+      print(userFireStore.data()!['token']);
+      String notificationTitle = 'Booking Request';
+      String notificationBody = 'Booking request accepted by ${user!.email}.';
+      
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'title': notificationTitle,
+        'body': notificationBody,
+        'type': 'bookingRequest',
+        'receiverID': studentID,
+        'senderID': user.uid
+      });
+
+      await MessagingService.sendNotification(notificationTitle, notificationBody, userFireStore.data()!['token']);
+      
+
+
     } on FirebaseAuthException catch (e) {
       throw CustomException(e.message);
     }
   }
 
-  static Future rejectBookingRequest(String reqID) async {
+  static Future rejectBookingRequest(String reqID, String studentID) async {
     try {
+      final user = await FirebaseAuth.instance.currentUser;
       await FirebaseFirestore.instance.collection('schedules').doc(reqID).delete();
+
+      final userFireStore = await FirebaseFirestore.instance.collection('users').doc(studentID).get();  // sends notification
+      print('receiver ID');
+      print(userFireStore.data()!['token']);
+      String notificationTitle = 'Booking Request';
+      String notificationBody = 'Booking request rejected by ${user!.email}.';
+      
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'title': notificationTitle,
+        'body': notificationBody,
+        'type': 'bookingRequest',
+        'receiverID': studentID,
+        'senderID': user.uid
+      });
+
+      await MessagingService.sendNotification(notificationTitle, notificationBody, userFireStore.data()!['token']);
+      
     } on FirebaseAuthException catch (e) {
       throw CustomException(e.message);
     }

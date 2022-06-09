@@ -1,9 +1,8 @@
 import 'package:better_health/screens/doctor_view_item.dart';
-import 'package:better_health/services/bookings/booking_service.dart';
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
-import 'package:better_health/utils/custom_exception.dart';
 import 'package:better_health/view_model/auth_view_model.dart';
+import 'package:better_health/view_model/booking_view_model.dart';
 import 'package:better_health/widgets/top_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,36 +18,6 @@ class BookingRequest extends StatefulWidget {
 }
 
 class _BookingRequestState extends State<BookingRequest> {
-  Future acceptBookingRequest(String reqID, BuildContext context, Function setter) async {
-    try {
-      BookingService.acceptBookingRequest(reqID);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Booking request accepted.'))
-      );
-      setter();
-    } on CustomException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message!))
-      );
-      print(e.message);
-    }
-  }
-
-  Future rejectBookingRequest(String reqID, BuildContext context, Function setter) async {
-    try {
-      BookingService.rejectBookingRequest(reqID);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Booking request accepted.'))
-      );
-      setter();
-    } on CustomException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message!))
-      );
-      print(e.message);
-    }
-  }
-
   Function? setter() {
     setState(() {});
     return null;
@@ -83,7 +52,7 @@ class _BookingRequestState extends State<BookingRequest> {
           addSpaceVertically(size.height*0.03),
           Expanded(
             child: StreamBuilder<dynamic>(
-              stream: BookingService.getBookingRequestList(),
+              stream: BookingViewModel.getBookingRequestList(),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   List list = snapshot.data;
@@ -103,8 +72,8 @@ class _BookingRequestState extends State<BookingRequest> {
                       return 
                       DoctorViewItem(
                         size: size, themeData: themeData, 
-                        acceptFunc: () => acceptBookingRequest(list[index]['id'], context, setter), 
-                        rejectFunc: () => rejectBookingRequest(list[index]['id'], context, setter),
+                        acceptFunc: () => BookingViewModel.acceptBookingRequest(list[index]['id'], list[index]['studentID'], context, setter), 
+                        rejectFunc: () => BookingViewModel.rejectBookingRequest(list[index]['id'], list[index]['studentID'], context, setter),
                         name: list[index]['studentName'], 
                         text: list[index]['day'] + ', ' + list[index]['date'] + ' ' + list[index]['month'] + ' ' + list[index]['year'] + ', ' + ' ' + list[index]['time'],
                       );

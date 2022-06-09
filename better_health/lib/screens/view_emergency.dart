@@ -1,5 +1,4 @@
 import 'package:better_health/screens/doctor_view_item.dart';
-import 'package:better_health/services/services.dart';
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/view_model/emergency_viewmodel.dart';
 import 'package:better_health/widgets/page_heading.dart';
@@ -25,7 +24,7 @@ class _ViewEmergencyState extends State<ViewEmergency> {
       padding: EdgeInsets.fromLTRB(25, 15, 25, 0),
       child: Column(
         children: [
-          TopNavBar(),
+          TopNavBar(onLeftPress: () => onClickNotification(context),),
           PageHeading(themeData: themeData, text: 'Emergency Calls'),
           addSpaceVertically(size.height*0.05),
           Expanded(
@@ -61,11 +60,3 @@ class _ViewEmergencyState extends State<ViewEmergency> {
     );
   }
 }
-
-
-// ListView.builder(
-//               itemCount: 10,
-//               itemBuilder: (BuildContext context, int index){
-//                 return DoctorViewItem(size: size, themeData: themeData, page: 'emergencyView',);
-//               },
-//             ),

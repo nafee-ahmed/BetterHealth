@@ -133,4 +133,46 @@ class BookingViewModel {
       );
     }
   }
+
+  static Stream getBookingRequestList() {
+    return BookingService.getBookingRequestList();
+  }
+
+  static Future acceptBookingRequest(String reqID, String studentID, BuildContext context, Function setter) async {
+    try {
+      BookingService.acceptBookingRequest(reqID, studentID);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Booking request accepted.'))
+      );
+      setter();
+    } on CustomException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message!))
+      );
+      print(e.message);
+    }
+  }
+
+  static Future rejectBookingRequest(String reqID, String studentID, BuildContext context, Function setter) async {
+    try {
+      BookingService.rejectBookingRequest(reqID, studentID);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Booking request rejected.'))
+      );
+      setter();
+    } on CustomException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message!))
+      );
+      print(e.message);
+    }
+  }
+
+  static Stream loadTopDoctors() {
+    return BookingService.loadTopDoctors();
+  }
+
+  static Future getDoctorListForRating() {
+    return BookingService.getDoctorListForRating();
+  }
 }

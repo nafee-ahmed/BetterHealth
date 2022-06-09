@@ -1,11 +1,9 @@
 import 'package:better_health/routes.dart';
-import 'package:better_health/services/user/my_user.dart';
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
 import 'package:better_health/view_model/auth_view_model.dart';
 import 'package:better_health/widgets/auth_button.dart';
 import 'package:better_health/widgets/input.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:better_health/utils/constants.dart';
 import 'package:flutter/material.dart';
+
+import '../routes.dart';
 
 Widget addSpaceVertically(double height){
   return SizedBox(
@@ -131,4 +135,9 @@ class DateHolder {
   String year;
   String date;
   DateHolder(this.day, this.month, this.year, this.date);
+}
+
+
+void onClickNotification(BuildContext context){
+  Navigator.of(context).pushNamed(Routes.notificationPage);
 }

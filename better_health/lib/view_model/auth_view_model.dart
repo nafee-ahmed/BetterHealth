@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:better_health/models/currentUser.dart';
 import 'package:better_health/routes.dart';
+import 'package:better_health/screens/auth_screen.dart';
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import '../services/services.dart';
@@ -36,6 +40,10 @@ class AuthViewModel{
   //   }
   //   return null;
   // }
+
+  static Stream getStream() {
+    return MyUser.stream;
+  }
 
   static Future loginPress(BuildContext context, TextEditingController emailController, TextEditingController passwordController) async {
     late BuildContext dialogContext;
@@ -73,6 +81,10 @@ class AuthViewModel{
       specialityController.text.trim(), aboutController.text.trim(), 'doctor');
       if(signedUpOrNot == 'success') {
         Navigator.of(context).pop();
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          context.read<CurrentUser>().name = nameController.text.trim();
+          context.read<CurrentUser>().email = emailController.text.trim();
+        });
         Navigator.of(context).popAndPushNamed(Routes.doctorHomePage);
       } else {
         Navigator.of(context).pop();
@@ -107,6 +119,10 @@ class AuthViewModel{
       if (signedUpOrNot == 'success') {
         Navigator.of(context).pop();  // loading bar
         // print('Sign up values: ${emailController.text}, ${passwordController.text}, ${nameController.text}, ${matricController.text}');
+        WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+          context.read<CurrentUser>().name = nameController.text.trim();
+          context.read<CurrentUser>().email = emailController.text.trim();
+        });
         Navigator.of(context).popAndPushNamed(Routes.studentHome);
       } else {
         Navigator.of(context).pop();  // loading bar
@@ -123,7 +139,7 @@ class AuthViewModel{
     return null;
   }
 
-  static Future? logoutPress(BuildContext context) async {
+  static Future logoutPress(BuildContext context) async {
     try {
       await MyUser.logout();
       Navigator.of(context).pushReplacementNamed(Routes.authPage);
@@ -145,14 +161,15 @@ class AuthViewModel{
     }
   }
 
-  static Future<MyUser> getStudentCurrentUser(BuildContext context) async {
+  static Future<Map<String, dynamic>> getStudentCurrentUser(BuildContext context) async {
     try {
       final cont =  context.read<CurrentUser>();
       MyUser currentUser = await MyUser.getCurrentUserInfo();
       print(currentUser.name);
       cont.name = currentUser.name;
       cont.email = currentUser.email;
-      return MyUser(name: currentUser.name, email: currentUser.email);
+      // return MyUser(name: currentUser.name, email: currentUser.email);
+      return {'name': currentUser.name, 'email': currentUser.email};
     } on CustomException catch (e) {
       print(e);
       throw CustomException(e.message);
@@ -172,30 +189,32 @@ class AuthViewModel{
 
   static Future? editProfile(String name, String oldPassword, String newPassword, String email, 
   final formKey, BuildContext context) async {
-      if(formKey.currentState!.validate()) {
-        showDialog(
-          context: context, 
-          builder: (context){
-            return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-          }
-        );
-        try {
-          MyUser userRes = await MyUser.editProfile(name, oldPassword, newPassword, email);
-          await MyUser.logout();
-          Navigator.of(context).pop();
-          Navigator.of(context).pushReplacementNamed(Routes.authPage);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Profile updated. Please login again.'))
-          );
-        } on CustomException catch (e) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.message!))
-          );
+    late BuildContext tempContext;
+    if(formKey.currentState!.validate()) {
+      showDialog(
+        context: context, 
+        builder: (context){
+          tempContext = context;
+          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
         }
+      );
+      try {
+        MyUser userRes = await MyUser.editProfile(name, oldPassword, newPassword, email);
+        await MyUser.logout();
+        Navigator.of(tempContext).pop();
+        Navigator.of(tempContext).pushReplacementNamed(Routes.authPage);
+        ScaffoldMessenger.of(tempContext).showSnackBar(
+          SnackBar(content: Text('Profile updated. Please login again.'))
+        );
+      } on CustomException catch (e) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message!))
+        );
       }
-      return null;
     }
+    return null;
+  }
 
     static Future? deleteProfile(String oldPassword, BuildContext context) async {
       showDialog(
@@ -274,4 +293,14 @@ class AuthViewModel{
     //   return null;
     // }
 
+    static Future<Map<String, dynamic>> getUserDetails() async {
+      Map<String, dynamic> map = await MyUser.getUserDetails();
+      // // if(map['type'] != 'not found') context.read<CurrentUser>().setUser(map['name'], map['email']);
+      // if (map['type'] != 'not found') {
+      //   context.read<CurrentUser>().name = map['name'];
+      //   context.read<CurrentUser>().email = map['email'];
+      // }
+      // return map['type'];
+      return map;
+    }
 }

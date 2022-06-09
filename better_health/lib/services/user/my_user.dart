@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:better_health/models/currentUser.dart';
 import 'package:better_health/utils/custom_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,7 @@ class MyUser{
     required this.email, 
     this.userType=''});
 
-  static Stream<User?> get stream { 
+  static Stream<dynamic> get stream { 
     return FirebaseAuth.instance.authStateChanges();
   }
 
@@ -111,6 +110,9 @@ class MyUser{
 
   static Future logout() async {
     try {
+       // notification setup
+      await FirebaseMessaging.instance.deleteToken();
+
       await FirebaseAuth.instance.signOut();
     } on FirebaseAuthException catch (e) {
       throw CustomException(e.message);
@@ -124,6 +126,7 @@ class MyUser{
       String email = user!.email!;
       final users = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
       var doc = users.data() as Map<String, dynamic>;
+      print('getCurrentUserInfo: ' + doc['name']);
       return MyUser(name: doc['name'], email: email);
     } on FirebaseAuthException catch (e) {
       print(e);
@@ -178,5 +181,17 @@ class MyUser{
     } on FirebaseAuthException catch (e) {
       throw CustomException(e.message);
     }
+  }
+
+  static Future<Map<String, dynamic>> getUserDetails() async {
+    final user = await FirebaseAuth.instance.currentUser;
+    if(user != null){
+      final users = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: user.email).get();
+      for(var user in users.docs){
+        final authUser = user.data();
+        return {'type': authUser['userType'], 'name': authUser['name'], 'email': authUser['email']};
+      }
+    }
+    return {'type': 'not found'};
   }
 }

@@ -38,7 +38,7 @@ class _EmergencyRequestScreenState extends State<EmergencyRequestScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            TopNavBar(),
+            TopNavBar(onLeftPress: () => onClickNotification(context),),
             addSpaceVertically(size.height*0.01),
             PageHeading(themeData: themeData, text: 'Emergency Service',),
             Image.asset('assets/images/amb_img.jpeg'),

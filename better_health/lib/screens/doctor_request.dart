@@ -1,7 +1,5 @@
 import 'package:better_health/models/selected_doctor.dart';
-import 'package:better_health/services/bookings/booking_service.dart';
 import 'package:better_health/utils/constants.dart';
-import 'package:better_health/utils/custom_exception.dart';
 import 'package:better_health/view_model/booking_view_model.dart';
 import 'package:better_health/widgets/datebox.dart';
 import 'package:better_health/widgets/long_button.dart';

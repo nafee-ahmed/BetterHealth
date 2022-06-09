@@ -1,9 +1,6 @@
 import 'package:better_health/models/currentUser.dart';
-import 'package:better_health/routes.dart';
-import 'package:better_health/services/user/my_user.dart';
 import 'package:better_health/utils/common_functions.dart';
 import 'package:better_health/utils/constants.dart';
-import 'package:better_health/utils/custom_exception.dart';
 import 'package:better_health/view_model/auth_view_model.dart';
 import 'package:better_health/widgets/input.dart';
 import 'package:better_health/widgets/long_button.dart';
@@ -57,7 +54,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            TopNavBar(),
+            TopNavBar(onLeftPress: () => onClickNotification(context),),
             addSpaceVertically(size.height*0.03),
             PageHeading(themeData: themeData, text: 'Edit Profile'),
             Align(

@@ -3,6 +3,7 @@ import 'package:better_health/screens/doctor_profile_screen.dart';
 import 'package:better_health/screens/schedule_screen.dart';
 import 'package:better_health/screens/view_emergency.dart';
 import 'package:better_health/utils/constants.dart';
+import 'package:better_health/view_model/messaging_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -15,6 +16,12 @@ class DoctorHomeScreen extends StatefulWidget {
 
 class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   var indexClicked = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    MessagingViewModel.NotificationInit();
+  }
 
   @override
   Widget build(BuildContext context) {

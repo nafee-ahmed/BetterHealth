@@ -10,9 +10,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../models/currentUser.dart';
-import '../routes.dart';
-import '../services/services.dart';
-import '../utils/custom_exception.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
   const DoctorProfileScreen({ Key? key }) : super(key: key);
@@ -51,7 +48,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            TopNavBar(),
+            TopNavBar(onLeftPress: () => onClickNotification(context),),
             addSpaceVertically(size.height*0.03),
             PageHeading(themeData: themeData, text: 'Edit Profile'),
             Align(

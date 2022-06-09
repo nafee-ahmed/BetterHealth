@@ -2,8 +2,9 @@
 
 
 
-Google Drive Link for apk: https://drive.google.com/file/d/10Iwv_ABGUIofW5RrYrFtbGVrDfY_cwB-/view
+Sprint 2 Google Drive Link for apk: https://drive.google.com/file/d/1p7DRwlF-WuLdCMDHz_wAsvUVqRwOvqSZ/view?usp=sharing
 
 
 
-Second sprint code half not finalized again.
+Second sprint code.
+

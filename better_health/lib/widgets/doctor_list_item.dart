@@ -15,7 +15,7 @@ class DoctorListItem extends StatefulWidget {
     this.executeOnTap,
     this.name = '',
     this.speciality = '',
-    this.rating = 0
+    this.rating = 0.0
   }) : super(key: key);
 
   final Size size;

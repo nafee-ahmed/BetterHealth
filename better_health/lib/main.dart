@@ -5,16 +5,28 @@ import 'package:better_health/models/rating.dart';
 import 'package:better_health/models/selected_doctor.dart';
 import 'package:better_health/routes.dart';
 import 'package:better_health/screens/auth_screen.dart';
+import 'package:better_health/services/messaging/messaging_service.dart';
 import 'package:better_health/utils/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+Future<void> _handleBackgroundMessaging(RemoteMessage message) async {
+  // notification click listener
+  print('handling background message ${message.data.toString()}');
+  print(message.notification!.title);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessaging);
+  MessagingService.initialize();
+
   runApp(const MyApp());
 }
 
@@ -63,3 +75,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
