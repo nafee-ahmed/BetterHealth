@@ -4,6 +4,7 @@ import 'package:better_health/screens/doctor_profile_screen.dart';
 import 'package:better_health/screens/doctor_request.dart';
 import 'package:better_health/screens/emergency_request_screen.dart';
 import 'package:better_health/screens/forgot_password_screen.dart';
+import 'package:better_health/screens/loading_screen.dart';
 import 'package:better_health/screens/login_screen.dart';
 import 'package:better_health/screens/notification_screen.dart';
 import 'package:better_health/screens/signup_screen.dart';
@@ -11,6 +12,7 @@ import 'package:better_health/screens/student_home_screen.dart';
 import 'package:better_health/screens/student_profile_screen.dart';
 import 'package:better_health/screens/student_rating_screen.dart';
 import 'package:better_health/screens/view_emergency.dart';
+import 'package:better_health/screens/view_emergency_details.dart';
 import 'package:flutter/material.dart';
 
 class Routes{
@@ -29,7 +31,12 @@ class Routes{
   static const String doctorProfilePage = '/doctor/profile';
   static const String doctorViewEmergency = '/doctor/emergency';
 
+  static const String doctorViewEmergencyDetails = '/doctor/emergencydetails';
+
+
   static const String authPage = '/auth';
+
+  static const String loadingPage = '/loading';
 
 
   static Route<dynamic> generateRoutes(RouteSettings settings){
@@ -85,6 +92,14 @@ class Routes{
       case forgotPasswordPage:
         return MaterialPageRoute(
           builder: (context) => ForgotPasswordScreen(),
+        );
+      case doctorViewEmergencyDetails:
+        return MaterialPageRoute(
+          builder: (context) => ViewEmergencyDetails(),
+        );
+      case loadingPage:
+        return MaterialPageRoute(
+          builder: (context) => LoadingScreen(),
         );
       default:
         throw FormatException('Routes not found');

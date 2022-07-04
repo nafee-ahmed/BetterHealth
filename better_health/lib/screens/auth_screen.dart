@@ -63,8 +63,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 if (snapshot.hasData) {
                   final map = snapshot.data as Map<String, dynamic>;
                   WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                    context.read<CurrentUser>().name = map['name'];
-                    context.read<CurrentUser>().email = map['email'];
+                    context.read<CurrentUser>().name = map['name'] ?? 'Loading';
+                    context.read<CurrentUser>().email = map['email'] ?? 'Loading';
                   });
                   
                   if(map['type'] == 'doctor'){

@@ -3,6 +3,7 @@ import 'package:better_health/firebase_options.dart';
 import 'package:better_health/models/currentUser.dart';
 import 'package:better_health/models/rating.dart';
 import 'package:better_health/models/selected_doctor.dart';
+import 'package:better_health/models/selected_emergency.dart';
 import 'package:better_health/routes.dart';
 import 'package:better_health/screens/auth_screen.dart';
 import 'package:better_health/services/messaging/messaging_service.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => Rating(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SelectedEmergency(),
         )
       ],
       builder: (context, child){

@@ -157,7 +157,8 @@ class MyUser{
           await user.updatePassword(newPassword);
         }
         await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-          'name': name
+          'name': name,
+          'email': email
         });
         return MyUser(name: name, email: email);
       } else {

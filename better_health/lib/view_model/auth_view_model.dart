@@ -54,11 +54,14 @@ class AuthViewModel{
         return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
       }
     );
+
+    // late BuildContext dialogContext = context;
+    // Navigator.of(dialogContext).pushNamed(Routes.loadingPage);
     try {
       await MyUser.signIn(emailController.text.trim(), passwordController.text.trim());
       Navigator.of(dialogContext).pop();
       Navigator.of(dialogContext).pushReplacementNamed(Routes.authPage);
-        
+
     } on CustomException catch (e) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,12 +74,8 @@ class AuthViewModel{
   static Future? doctorSignupPress(BuildContext context, TextEditingController emailController, TextEditingController passwordController,
     TextEditingController nameController, TextEditingController specialityController, TextEditingController aboutController, final formKey) async {
     if(formKey.currentState!.validate()){
-      showDialog(
-        context: context, 
-        builder: (context){
-          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-        }
-      );
+      Navigator.of(context).pushNamed(Routes.loadingPage);
+
       String signedUpOrNot = await MyUser.doctorSignUp(emailController.text.trim(), passwordController.text.trim(), nameController.text.trim(),
       specialityController.text.trim(), aboutController.text.trim(), 'doctor');
       if(signedUpOrNot == 'success') {
@@ -105,12 +104,8 @@ class AuthViewModel{
     TextEditingController nameController, TextEditingController matricController, TextEditingController specialityController, 
     TextEditingController aboutController, final formKey) async {
     if(formKey.currentState!.validate()){
-      showDialog(
-        context: context, 
-        builder: (context){
-          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-        }
-      );
+      Navigator.of(context).pushNamed(Routes.loadingPage);
+      
       String signedUpOrNot = await MyUser.studentSignUp(emailController.text.trim(), passwordController.text.trim(), nameController.text.trim(), matricController.text.trim(),
       specialityController.text.trim(), aboutController.text.trim(), 'student');
       // context.read<CurrentUser>().name = nameController.text.trim();
@@ -140,10 +135,13 @@ class AuthViewModel{
   }
 
   static Future logoutPress(BuildContext context) async {
+    Navigator.of(context).pushNamed(Routes.loadingPage);
     try {
       await MyUser.logout();
+      Navigator.of(context).pop();
       Navigator.of(context).pushReplacementNamed(Routes.authPage);
     } on CustomException catch (e) {
+      Navigator.of(context).pop();
       print(e.message);
     }
   }
@@ -189,20 +187,29 @@ class AuthViewModel{
 
   static Future? editProfile(String name, String oldPassword, String newPassword, String email, 
   final formKey, BuildContext context) async {
-    late BuildContext tempContext;
+    // late BuildContext tempContext;
+    late BuildContext tempContext = context;
     if(formKey.currentState!.validate()) {
-      showDialog(
-        context: context, 
-        builder: (context){
-          tempContext = context;
-          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-        }
-      );
+      // showDialog(
+      //   context: context, 
+      //   builder: (context){
+      //     tempContext = context;
+      //     return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
+      //   }
+      // );
+
+      Navigator.of(tempContext).pushNamed(Routes.loadingPage);
+
       try {
         MyUser userRes = await MyUser.editProfile(name, oldPassword, newPassword, email);
         await MyUser.logout();
+        // Navigator.of(tempContext).pop();
+        // Navigator.of(tempContext).pushReplacementNamed(Routes.authPage);
+
         Navigator.of(tempContext).pop();
-        Navigator.of(tempContext).pushReplacementNamed(Routes.authPage);
+        Navigator.of(context).pushReplacementNamed(Routes.authPage);
+
+
         ScaffoldMessenger.of(tempContext).showSnackBar(
           SnackBar(content: Text('Profile updated. Please login again.'))
         );
@@ -217,12 +224,14 @@ class AuthViewModel{
   }
 
     static Future? deleteProfile(String oldPassword, BuildContext context) async {
-      showDialog(
-        context: context, 
-        builder: (context){
-          return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
-        }
-      );
+      // showDialog(
+      //   context: context, 
+      //   builder: (context){
+      //     return Center(child: CircularProgressIndicator(color: COLOR_PRIMARY),);
+      //   }
+      // );
+      Navigator.of(context).pushNamed(Routes.loadingPage);
+
       try {
         if(oldPassword.isEmpty) throw CustomException('Please enter curent password');
         bool userRes = await MyUser.deleteProfile(oldPassword);

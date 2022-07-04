@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class EmergencyService {
-  static Future addEmergencyRequest(String emText) async {
+  static Future addEmergencyRequest(String emText, double latitude, double longitude) async {
     String userName = 'undefined';
     String matric = 'undefined';
     final user = await FirebaseAuth.instance.currentUser;
@@ -20,6 +20,9 @@ class EmergencyService {
         'text': emText,
         'name': userName,
         'matric': matric,
+        'latitude': latitude,
+        'longitude': longitude,
+        'status': 'pending'
       });
 
       String notificationTitle = 'Emergency Call';  // sends notification
@@ -44,7 +47,27 @@ class EmergencyService {
 
   static Stream<QuerySnapshot> loadEmergencies() {
     try {
-      return FirebaseFirestore.instance.collection('emergencies').snapshots();
+      return FirebaseFirestore.instance.collection('emergencies').where('status', isEqualTo: 'pending').snapshots();
+    } on FirebaseAuthException catch (e) {
+      throw CustomException(e.message);
+    }
+  }
+
+  static Future<dynamic> getLatLng(String emergencyID) async {
+    try {
+      final data = await FirebaseFirestore.instance.collection('emergencies').doc(emergencyID).get();
+      var doc = data.data() as Map<String, dynamic>;
+      return {'lat': doc['latitude'], 'long': doc['longitude']};
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future handleEmergency(String emergencyID) async {
+    try {
+      await FirebaseFirestore.instance.collection('emergencies').doc(emergencyID).update({
+        'status': 'confirmed'
+      });
     } on FirebaseAuthException catch (e) {
       throw CustomException(e.message);
     }

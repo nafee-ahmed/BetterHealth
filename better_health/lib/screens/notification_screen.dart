@@ -49,6 +49,7 @@ class NotificationScreen extends StatelessWidget {
                           String image = 'student_image';
                           if (list[index]['type'] == 'bookingRequest') image = 'booking';
                           else if (list[index]['type'] == 'emergencyRequest') image = 'emergency';
+                          else if (list[index]['type'] == 'ratingNotification') image = 'star';
                           return DoctorViewItem(
                             size: size, themeData: themeData, page: 'student', 
                             image: image, 

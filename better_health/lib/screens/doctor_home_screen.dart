@@ -42,7 +42,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         backgroundColor: COLOR_WHITE,
         bottomNavigationBar: Container(
           margin: EdgeInsets.fromLTRB(20, 0, 20, 8),
-          height: size.height*0.09,
+          height: size.width < 370 ? size.height * 0.10 : size.height * 0.09,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),            
             boxShadow: [                                                               

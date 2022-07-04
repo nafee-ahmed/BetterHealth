@@ -7,13 +7,15 @@ class LongButton extends StatelessWidget {
     required this.size,
     required this.text,
     required this.pressFunc,
-    this.color = COLOR_PRIMARY
+    this.color = COLOR_PRIMARY,
+    this.textColor = COLOR_WHITE,
   }) : super(key: key);
 
   final Size size;
   final String text;
   final VoidCallback pressFunc;
   final Color color;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class LongButton extends StatelessWidget {
           primary: color
         ),
         onPressed: pressFunc,
-        child: Text(text),
+        child: Text(text, style: TextStyle(color: textColor),),
       ),
     );
   }

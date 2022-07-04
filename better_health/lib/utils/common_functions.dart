@@ -70,10 +70,14 @@ String? passwordValidator(String? value){
   }
   else if(value.length < 6){
     return 'has to be more than 6 characters';
+  } else if(!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+    return 'need at least 1 special character e.g !, @, #, \$, &, *, ~, \\';
   }
   else{
     return null;
   }
+  // !value.contains('!') || !value.contains('@') || !value.contains('#') || !value.contains('\$') || !value.contains('&')
+  //   || !value.contains('*') || !value.contains('~') || !value.contains('\\')
 }
 
 String? updatePasswordValidator(String? value){

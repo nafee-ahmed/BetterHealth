@@ -93,7 +93,7 @@ class _DoctorListState extends State<DoctorList> {
                       return DoctorListItem(
                         size: size, themeData: themeData, 
                         rating: docList[index]['rating'].toDouble(),
-                        executeOnTap: () => viewDoctor(docList[index]['name'], docList[index]['speciality'], 0, docList[index]['about'], docList[index]['id']), name: docList[index]['name'], speciality: docList[index]['speciality'],
+                        executeOnTap: () => viewDoctor(docList[index]['name'], docList[index]['speciality'], docList[index]['rating'].toDouble(), docList[index]['about'], docList[index]['id']), name: docList[index]['name'], speciality: docList[index]['speciality'],
                       );
                     },
                   );

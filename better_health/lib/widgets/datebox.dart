@@ -26,7 +26,7 @@ class _DateBoxState extends State<DateBox> {
       children: [
         Container(
           width: (widget.date != '') ? 75 : 90,
-          padding: (widget.date != '') ? EdgeInsets.symmetric(horizontal: 16, vertical: 15) : EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          padding: (widget.date != '') ? EdgeInsets.symmetric(horizontal: 16, vertical: 15) : EdgeInsets.symmetric(horizontal: 21, vertical: 13),
           margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           decoration: BoxDecoration(
             color: COLOR_BOX_GREY,

@@ -1,5 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.better_health">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+    
    <application
         android:label="better_health"
         android:name="${applicationName}"
@@ -35,5 +39,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyDRhNA-1fkzUfxprXnGL4Wf-UhS57gpiz0"/>
     </application>
 </manifest>

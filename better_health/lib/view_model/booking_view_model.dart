@@ -1,4 +1,5 @@
 import 'package:better_health/models/selected_doctor.dart';
+import 'package:better_health/routes.dart';
 import 'package:better_health/screens/schedule_screen.dart';
 import 'package:better_health/services/services.dart';
 import 'package:better_health/utils/common_functions.dart';
@@ -8,51 +9,136 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BookingViewModel {
-  static Function? addScheduleButton(BuildContext context, final eventController,
-  Map<DateTime, List<String>> selectedEvents, var selectedDay, Function setter){
-    showDialog(context: context, builder: (context) => AlertDialog(
-      title: Text('Add times for the selected date'),
-      content: TextFormField(
-        decoration: InputDecoration(hintText: 'e.g 9: 00 AM', focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: COLOR_PRIMARY))),
-        controller: eventController,
-      ),
-      actions: [
-        TextButton(
-          style: TextButton.styleFrom(primary: COLOR_PRIMARY),
-          onPressed: () => Navigator.of(context).pop(), 
-          child: Text('Cancel')
-        ),
-        TextButton(
-          style: TextButton.styleFrom(primary: COLOR_PRIMARY),
-          onPressed: () async {
-            if(eventController.text.isEmpty) {
-              Navigator.of(context).pop();
-              return;
-            } else {
-              if(selectedDay == null && selectedEvents[selectedDay] == null){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Select a day first...'))
-                );
-                return;
-              };
-              if (selectedEvents[selectedDay] != null) {
-                selectedEvents[selectedDay]!.add(eventController.text);
-              } else {
-                selectedEvents[selectedDay] = [eventController.text];
-              }
-            }
-            Navigator.of(context).pop();
-            eventController.clear();
-            setter();
-            await BookingService.sendDoctorSchedule(selectedEvents);
-            return;
-          }, 
-          child: Text('Okay')
-        ),
-      ],
-    ));
+  // static Function? addScheduleButton(BuildContext context, final eventController,
+  // Map<DateTime, List<String>> selectedEvents, var selectedDay, Function setter){
+  //   showDialog(context: context, builder: (context) => AlertDialog(
+  //     title: Text('Add times for the selected date'),
+  //     content: TextFormField(
+  //       decoration: InputDecoration(hintText: 'e.g 9: 00 AM', focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: COLOR_PRIMARY))),
+  //       controller: eventController,
+  //     ),
+  //     actions: [
+  //       TextButton(
+  //         style: TextButton.styleFrom(primary: COLOR_PRIMARY),
+  //         onPressed: () => Navigator.of(context).pop(), 
+  //         child: Text('Cancel')
+  //       ),
+  //       TextButton(
+  //         style: TextButton.styleFrom(primary: COLOR_PRIMARY),
+  //         onPressed: () async {
+  //           if(eventController.text.isEmpty) {
+  //             Navigator.of(context).pop();
+  //             return;
+  //           } else {
+  //             if(selectedDay == null && selectedEvents[selectedDay] == null){
+  //               ScaffoldMessenger.of(context).showSnackBar(
+  //                 SnackBar(content: Text('Select a day first...'))
+  //               );
+  //               return;
+  //             };
+  //             if (selectedEvents[selectedDay] != null) {
+  //               selectedEvents[selectedDay]!.add(eventController.text);
+  //             } else {
+  //               selectedEvents[selectedDay] = [eventController.text];
+  //             }
+  //           }
+  //           Navigator.of(context).pop();
+  //           eventController.clear();
+  //           setter();
+  //           await BookingService.sendDoctorSchedule(selectedEvents);
+  //           return;
+  //         }, 
+  //         child: Text('Okay')
+  //       ),
+  //     ],
+  //   ));
+  //   print(selectedDay);
+  //   return null;
+  // }
+
+
+  static Future? addScheduleButton(BuildContext context, final eventController,
+  Map<DateTime, List<String>> selectedEvents, var selectedDay, Function setter) async {
+    // showDialog(context: context, builder: (context) => AlertDialog(
+    //   title: Text('Add times for the selected date'),
+    //   content: TextFormField(
+    //     decoration: InputDecoration(hintText: 'e.g 9: 00 AM', focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: COLOR_PRIMARY))),
+    //     controller: eventController,
+    //   ),
+    //   actions: [
+    //     TextButton(
+    //       style: TextButton.styleFrom(primary: COLOR_PRIMARY),
+    //       onPressed: () => Navigator.of(context).pop(), 
+    //       child: Text('Cancel')
+    //     ),
+    //     TextButton(
+    //       style: TextButton.styleFrom(primary: COLOR_PRIMARY),
+    //       onPressed: () async {
+    //         if(eventController.text.isEmpty) {
+    //           Navigator.of(context).pop();
+    //           return;
+    //         } else {
+    //           if(selectedDay == null && selectedEvents[selectedDay] == null){
+    //             ScaffoldMessenger.of(context).showSnackBar(
+    //               SnackBar(content: Text('Select a day first...'))
+    //             );
+    //             return;
+    //           };
+    //           if (selectedEvents[selectedDay] != null) {
+    //             selectedEvents[selectedDay]!.add(eventController.text);
+    //           } else {
+    //             selectedEvents[selectedDay] = [eventController.text];
+    //           }
+    //         }
+    //         Navigator.of(context).pop();
+    //         eventController.clear();
+    //         setter();
+    //         await BookingService.sendDoctorSchedule(selectedEvents);
+    //         return;
+    //       }, 
+    //       child: Text('Okay')
+    //     ),
+    //   ],
+    // ));
+    final initialTime = await TimeOfDay(hour: 12, minute: 0);
+    final newTime = await showTimePicker(
+      context: context, 
+      initialTime: initialTime,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: COLOR_PRIMARY,
+              onSurface: COLOR_BLUE,
+            ),
+            buttonTheme: ButtonThemeData(
+              colorScheme: ColorScheme.light(
+                primary: COLOR_PRIMARY,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      }
+    );
+    if (newTime == null) return;
+    if(selectedDay == null && selectedEvents[selectedDay] == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Select a day first...'))
+      );
+      return;
+    };
+    if (selectedEvents[selectedDay] != null) {
+      selectedEvents[selectedDay]!.add(newTime.format(context).toString());
+    } else {
+      selectedEvents[selectedDay] = [newTime.format(context).toString()];
+    }
+    setter();
+    print(newTime.format(context));
     print(selectedDay);
-    return null;
+    await BookingService.sendDoctorSchedule(selectedEvents);
+    return;
+    
   }
 
   static Future getSchedules() async {
@@ -77,8 +163,12 @@ class BookingViewModel {
       String month = scheduleMap.keys.elementAt(index).month;
       String year = scheduleMap.keys.elementAt(index).year;
       print(date + ' ' + day + ' ' + month + ' ' + year + ' ' + selectedTime);
+      Navigator.of(context).pushNamed(Routes.loadingPage);
+
       await BookingService.sendBookingRequest(date, day, month, year, selectedTime, 
       context.read<SelectedDoctor>().id);
+      Navigator.of(context).pop();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Booking request sent to the doctor. Please wait for the doctor\'s response'))
       );

@@ -180,7 +180,13 @@ class BookingService {
       for (var s in snapshot.docs) {
         if (s.exists == true) {
           final user = await FirebaseFirestore.instance.collection('users').doc(s['patientID']).get();
-          final userData = user.data() as Map<String, dynamic>;
+          Map<String, dynamic> userData;
+          // Map<String, dynamic> userData = {'name': "Deleted User"};
+          if (user.exists == true) {
+            userData = user.data() as Map<String, dynamic>;
+          } else {
+            continue;
+          }
           // print(userData['name']);
           list.add({ 'date': s['date'], 'day': s['day'], 'month': s['month'], 'time': s['time'], 'year': s['year'],
           'id': s.reference.id, 'studentName': userData['name'], 'studentID': s['patientID'] });
